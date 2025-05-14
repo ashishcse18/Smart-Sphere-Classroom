@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz System</title>
+    <link rel="stylesheet" href="Testboard/style.css" />
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f0f2f5;
+      }
+      .sidebar {
+        width: 250px;
+        height: 100vh;
+        background: #2f3640;
+        color: white;
+        position: fixed;
+        padding-top: 20px;
+        text-align: center;
+      }
+      .profile-pic {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        margin: 0 auto 10px;
+        background-color: #ccc;
+        background-size: cover;
+        background-position: center;
+        cursor: pointer;
+      }
+      .sidebar input[type="file"] {
+        display: none;
+      }
+      .sidebar h2 {
+        margin-top: 10px;
+        font-size: 20px;
+      }
+      .sidebar ul {
+        list-style: none;
+        padding: 0;
+        margin-top: 20px;
+      }
+      .sidebar ul li {
+        padding: 15px;
+        cursor: pointer;
+        border-bottom: 1px solid #414b57;
+      }
+      .sidebar ul li:hover {
+        background: #414b57;
+      }
+      .main-content {
+        margin-left: 250px;
+        padding: 20px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      table,
+      th,
+      td {
+        border: 1px solid #ccc;
+      }
+      th,
+      td {
+        padding: 12px;
+        text-align: left;
+      }
+      th {
+        background: #2980b9;
+        color: white;
+      }
+      .header {
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
+      .hidden {
+        display: none;
+      }
+      .openExam {
+        color: red;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar">
+      <label for="upload-profile">
+        <div
+          class="profile-pic"
+          id="profilePreview"
+          style="background-image: url('https://via.placeholder.com/100')"
+        ></div>
+      </label>
+      <input
+        type="file"
+        id="upload-profile"
+        accept="image/*"
+        onchange="previewImage(event)"
+      />
+      <h2 id="user-role">Student</h2>
+      <ul>
+        <li onclick="showContent('dashboard')">Dashboard</li>
+        <li onclick="showContent('exam')">Exam</li>
+        <li onclick="showContent('AddExam')">Add Exam</li>
+        <li onclick="showContent('marks')">Marks</li>
+        <li onclick="toggleRole()">Switch Role</li>
+        <li onclick="goBack()">Back</li>
+      </ul>
+    </div>
+
+    <div class="main-content">
+      <div id="dashboard" class="content-section">
+        <div class="header">Welcome to the Dashboard</div>
+      </div>
+
+      <div id="AddExam" class="content-section hidden">
+        <div class="header">Add The Exams</div>
+        <div class="container">
+          <!-- Faculty Page Content -->
+          <button id="plusBtn" class="plus-btn">+</button>
+
+          <!-- Test Creation Popup -->
+          <div id="testPopup" class="popup">
+            <div class="popup-content">
+              <h2>Create a New Test</h2>
+              <form id="testForm">
+                <div class="form-group">
+                  <label for="subjectTitle">Subject Title:</label>
+                  <input
+                    type="text"
+                    id="subjectTitle"
+                    name="subjectTitle"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="subjectCode">Subject Code:</label>
+                  <input
+                    type="text"
+                    id="subjectCode"
+                    name="subjectCode"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="duration">Test Duration (in minutes):</label>
+                  <input type="number" id="duration" name="duration" required />
+                </div>
+
+                <div id="questionsContainer"></div>
+
+                <small id="CancelBtn">Cancel</small>
+                <button type="button" id="addQuestionBtn">Add Question</button>
+                <button type="submit" id="submitTestBtn">Upload Test</button>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <script src="Testboard/script.js"></script>
+      </div>
+
+      <div id="exam" class="content-section hidden">
+        <div class="header">Available Exams</div>
+        <table>
+          <thead>
+          <tr>
+            <th>Exam Name</th>
+            <th>Code</th>
+            <th>Date</th>
+            <th>Go to Exam</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>django</td>
+            <td>DJ231</td>
+            <td>Dec. 13, 2020, 12:11 p.m.</td>
+            <td class="openExam">Open</td>
+          </tr>
+        </tbody>
+        </table>
+      </div>
+      <div id="marks" class="content-section hidden">
+        <div class="header">View Marks</div>
+        <table>
+          <tr>
+            <th>Exam Name</th>
+            <th>Total Marks</th>
+            <th>Exam Date</th>
+          </tr>
+          <tr>
+            <td>django</td>
+            <td>5</td>
+            <td>Dec. 13, 2020, 12:11 p.m.</td>
+          </tr>
+          <tr>
+            <td>django</td>
+            <td>0</td>
+            <td>Dec. 13, 2020, 12:11 p.m.</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <script>
+      function showContent(id) {
+        document.querySelectorAll(".content-section").forEach((section) => {
+          section.classList.add("hidden");
+        });
+        document.getElementById(id).classList.remove("hidden");
+      }
+
+      function toggleRole() {
+        const role = document.getElementById("user-role");
+        if (role.innerText === "Student") {
+          role.innerText = "Faculty";
+          document.getElementById("marks").innerHTML = `
+          <div class="header">Upload/View Student Marks</div>
+          <table>
+            <tr><th>Student Name</th><th>Exam</th><th>Marks</th></tr>
+            <tr><td>Shubham</td><td>django</td><td><input type="text" placeholder="Enter marks" /></td></tr>
+          </table>
+        `;
+        } else {
+          role.innerText = "Student";
+          document.getElementById("marks").innerHTML = `
+          <div class="header">View Marks</div>
+          <table>
+            <tr><th>Exam Name</th><th>Total Marks</th><th>Exam Date</th></tr>
+            <tr><td>django</td><td>5</td><td>Dec. 13, 2020, 12:11 p.m.</td></tr>
+            <tr><td>django</td><td>0</td><td>Dec. 13, 2020, 12:11 p.m.</td></tr>
+          </table>
+        `;
+        }
+      }
+      function goBack() {
+        window.history.back();
+      }
+
+      // New part
+      // Fetch Exams and Populate Table
+      fetch('http://localhost:3000/api/getExamsFromDB')
+  .then(response => response.json())
+  .then(data => {
+    console.log('Fetched exams:', data);
+    const examTableBody = document.querySelector('tbody');
+    examTableBody.innerHTML = '';
+
+    data.forEach(exam => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${exam.subjectTitle}</td>
+        <td>${exam.subjectCode}</td>
+        <td>${new Date(exam.createdAt || exam.updatedAt || Date.now()).toLocaleString()}</td>
+        <td><a href="Testboard/start_exam.html?id=${exam._id}" style="color:blue; text-decoration:underline;">Open</a></td>
+      `;
+      examTableBody.appendChild(row);
+    });
+  })
+  .catch(error => {
+    console.error('Error loading exams:', error);
+  });
+
+
+      //old
+      function previewImage(event) {
+        const reader = new FileReader();
+        reader.onload = function () {
+          const output = document.getElementById("profilePreview");
+          output.style.backgroundImage = url("${reader.result}");
+        };
+        reader.readAsDataURL(event.target.files[0]);
+      }
+    </script>
+  </body>
+</html>
