@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Game</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <h1>Quiz Game</h1><button class="back-button" onclick="goBack()">Back</button>
+    </nav>
+
+    <div class="container">
+        <div id="main-menu">
+            <button onclick="showCategories('logical')">Logical Reasoning</button>
+            <button onclick="showCategories('quantitative')">Quantitative Aptitude</button>
+        </div>
+
+        <div id="subcategory-menu" class="hidden">
+            <h2>Select Subcategory</h2>
+            <div id="subcategory-buttons"></div>
+            <button class="backbtn" onclick="goBacktopage()">Back</button>
+        </div>
+
+        <div id="question-count" class="hidden">
+            <h2>Enter Number of Questions:</h2>
+            <input type="number" id="num-questions" min="1" max="10" value="5">
+            <button onclick="startQuiz()">Start Quiz</button>
+            <button class="backbtn" onclick="goBacktopage()">Back</button>
+        </div>
+
+        <div id="quiz-container" class="hidden">
+            <h2 id="score-counter">Score: 0</h2>
+            <h3 id="question-text"></h3>
+            <div id="answer-buttons"></div>
+            <div class="nav-buttons">
+                <button id="prev-button" class="hidden" onclick="prevQuestion()">Previous</button>
+                <button id="next-button" class="hidden" onclick="nextQuestion()">Next</button>
+                <button id="submit-button" class="hidden" onclick="submitQuiz()">Submit</button>
+            </div>
+        </div>
+
+        <div id="final-score-container" class="hidden">
+            <h2 id="final-score"></h2>
+            <button onclick="restartQuiz()">Play Again</button>
+        </div>
+        <script>
+            function restartQuiz(){
+                window.location.href="quizpage.html"
+            }
+        </script>
+        
+    </div>
+</body>
+</html>

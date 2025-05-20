@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar Page</title>
+    <link rel="stylesheet" href="calendar.css">
+</head>
+<body>
+    <nav>
+        <button class="back-button" onclick="goBack()">Back</button>
+        <h1>Schedule Your Tasks</h1>
+    </nav>
+
+    <div class="calendar-container">
+        <div class="calendar">
+            <input type="date" id="schedule-date">
+            <input type="text" id="schedule-description" placeholder="Enter Task Description">
+            <button onclick="saveSchedule()">Save Schedule</button>
+        </div>
+        <div class="schedule-list">
+            <h2>Scheduled Tasks</h2>
+            <ul id="task-list"></ul>
+        </div>
+    </div>
+
+    <script src="calendar.js"></script>
+</body>
+</html>

@@ -1,0 +1,147 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: white;
+}
+
+.navbar {
+    background-color: #2f3640;
+    color: white;
+    padding: 1px;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.container {
+    width: 80%;
+    margin: 20px auto;
+    background: white;
+    padding: 40px;
+    padding-left: 20px;
+    box-shadow: 0 0 10px grey;
+    border-radius: 8px;
+}
+
+input, textarea {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+textarea {
+    height: 100px;
+}
+
+.btn,.viewbtn {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+    width: 100%;
+    font-size: 16px;
+    border-radius: 5px;
+}
+
+.btn,.viewbtn:hover {
+    background-color: #0056b3;
+}
+
+.assignment {
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+    margin-top: 10px;
+    background: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+}
+
+.assignment a {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: bold;
+}
+
+.assignment a:hover {
+    color: #0056b3;
+}
+
+
+/* Button Styling */
+
+
+/* Table Styling */
+#assignmentsTable {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    background: #fff;
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#assignmentsTable th, #assignmentsTable td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+
+#assignmentsTable th {
+    background-color: #007BFF;
+    color: white;
+}
+
+#assignmentsTable tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+/* Delete Button */
+.delete-btn {
+    background-color: red;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.delete-btn:hover {
+    background-color: darkred;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 600px) {
+    #assignmentsTable {
+        font-size: 12px;
+    }
+
+    .btn, .delete-btn {
+        font-size: 14px;
+    }
+}
+
+.back-button {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    width: 100px;
+    background-color: #007bff;
+    color: white;
+    border: 1px solid white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s ease-in-out;
+}
+
+.back-button:hover {
+    background-color: #0056b3;
+}

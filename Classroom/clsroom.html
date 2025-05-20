@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Classroom Folder</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 1rem;
+    }
+    h1 {
+      text-align: center;
+    }
+    .course-card {
+      background: #fff;
+      padding: 1rem;
+      margin: 1rem auto;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .note-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0.5rem;
+    }
+    .note-item a {
+      text-decoration: none;
+    }
+    button {
+      margin: 0.2rem;
+    }
+  </style>
+</head>
+<body>
+  <h1>📁 Classroom Folder</h1>
+  <button onclick="addCourse()">➕ Add Course</button>
+  <div id="courses"></div>
+
+  <script>
+    const courseContainer = document.getElementById('courses');
+
+    function getFileIcon(filename) {
+      const ext = filename.split('.').pop().toLowerCase();
+      const icons = {
+        pdf: '📄',
+        doc: '📝',
+        docx: '📝',
+        ppt: '📊',
+        pptx: '📊',
+        xls: '📈',
+        xlsx: '📈',
+        jpg: '🖼️',
+        jpeg: '🖼️',
+        png: '🖼️',
+        txt: '📃',
+        default: '📁'
+      };
+      return icons[ext] || icons.default;
+    }
+
+    async function fetchCourses() {
+      const res = await fetch('http://localhost:5000/courses');
+      const courses = await res.json();
+      courseContainer.innerHTML = '';
+      courses.forEach(course => {
+        const div = document.createElement('div');
+        div.className = 'course-card';
+        div.innerHTML = `
+          <h3>${course.title}</h3>
+          <p>${course.description || ''}</p>
+          <button onclick="uploadNotes('${course.title}')">Upload Notes</button>
+          <div id="notes-${course.title}"></div>
+        `;
+        courseContainer.appendChild(div);
+        fetchNotes(course.title);
+      });
+    }
+
+    async function fetchNotes(title) {
+      const res = await fetch(`http://localhost:5000/courses/${title}/notes`);
+      const notes = await res.json();
+      const noteDiv = document.getElementById(`notes-${title}`);
+      noteDiv.innerHTML = notes.map(note => `
+        <div class="note-item">
+          <span>${getFileIcon(note.name)} <a href="http://localhost:5000/${note.path}" target="_blank">${note.name}</a></span>
+          <button onclick="deleteNote('${title}', '${note.name}')">🗑️</button>
+        </div>
+      `).join('');
+    }
+
+    async function addCourse() {
+      const { value: formValues } = await Swal.fire({
+        title: 'Add Course',
+        html: `
+          <input id="swal-title" class="swal2-input" placeholder="Course Title" required>
+          <input id="swal-desc" class="swal2-input" placeholder="Course Description (optional)">
+        `,
+        focusConfirm: false,
+        preConfirm: () => {
+          return {
+            title: document.getElementById('swal-title').value.trim(),
+            description: document.getElementById('swal-desc').value.trim()
+          };
+        }
+      });
+
+      if (formValues?.title) {
+        await fetch('http://localhost:5000/courses', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formValues)
+        });
+        fetchCourses();
+      }
+    }
+
+    async function uploadNotes(title) {
+      const { value: files } = await Swal.fire({
+        title: `Upload Notes for ${title}`,
+        input: 'file',
+        inputAttributes: {
+          'multiple': 'multiple'
+        },
+        showCancelButton: true
+      });
+
+      if (files) {
+        const formData = new FormData();
+        [...files].forEach(file => formData.append('files', file));
+
+        await fetch(`http://localhost:5000/courses/${title}/notes`, {
+          method: 'POST',
+          body: formData
+        });
+
+        fetchNotes(title);
+      }
+    }
+
+    async function deleteNote(title, name) {
+      await fetch(`http://localhost:5000/courses/${title}/notes/${name}`, {
+        method: 'DELETE'
+      });
+      fetchNotes(title);
+    }
+
+    fetchCourses();
+  </script>
+</body>
+</html>

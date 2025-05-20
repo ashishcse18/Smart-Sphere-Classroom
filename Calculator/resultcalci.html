@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPA & CGPA Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .navbar {
+            background-color: #2f3640;
+            color: white;
+            padding: 1px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: white;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 80%;
+            max-width: 1200px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            margin: 10px 0;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        button {
+            background: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px;
+            margin: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background: #0056b3;
+        }
+
+        input,
+        select {
+            width: 90%;
+            padding: 5px;
+            margin: 5px 0;
+            text-align: center;
+        }
+        .back-button {
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    width: 100px;
+    background-color: #007bff;
+    color: white;
+    border: 1px solid white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s ease-in-out;
+}
+
+.back-button:hover {
+    background-color: #0056b3;
+}
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <h1>GPA & CGPA Calculator</h1>
+        <button class="back-button" onclick="goBack()">Back</button>
+    </nav>
+    <div class="container">
+        <div class="gpa-calculator">
+            <h2>GPA Calculator</h2>
+            <table id="gpaTable">
+                <tr>
+                    <th>Subject</th>
+                    <th>Credits</th>
+                    <th>Grade</th>
+                </tr>
+            </table>
+            <button onclick="addRow()">Add Subject</button>
+            <button onclick="calculateGPA()">Calculate GPA</button>
+            <p id="gpaResult"></p>
+        </div>
+
+        <div class="cgpa-calculator">
+            <h2>CGPA Calculator</h2>
+            <table id="cgpaTable">
+                <tr>
+                    <th>Semester</th>
+                    <th>GPA</th>
+                </tr>
+            </table>
+            <button onclick="addSemester()">Add Semester</button>
+            <button onclick="calculateCGPA()">Calculate CGPA</button>
+            <p id="cgpaResult"></p>
+        </div>
+    </div>
+
+    <script>
+        function addRow() {
+            let table = document.getElementById("gpaTable");
+            let row = table.insertRow(-1);
+            row.innerHTML = `<td><input type="text" placeholder="Subject"></td>
+                             <td><input type="number" min="1" placeholder="Credits"></td>
+                             <td>
+                                 <select>
+                                    <option value="10">O</option>
+                                     <option value="9">A+</option>
+                                     <option value="8">A</option>
+                                     <option value="7">B+</option>
+                                     <option value="6">B</option>
+                                     <option value="5">C</option>
+                                     <option value="4">D</option>
+                                     <option value="0">F</option>
+                                 </select>
+                             </td>`;
+        }
+
+        function calculateGPA() {
+            let table = document.getElementById("gpaTable");
+            let rows = table.rows;
+            let totalCredits = 0, totalPoints = 0;
+
+            for (let i = 1; i < rows.length; i++) {
+                let credits = parseFloat(rows[i].cells[1].querySelector("input").value) || 0;
+                let grade = parseFloat(rows[i].cells[2].querySelector("select").value);
+                totalCredits += credits;
+                totalPoints += credits * grade;
+            }
+            let gpa = totalCredits > 0 ? (totalPoints / totalCredits).toFixed(2) : 0;
+            document.getElementById("gpaResult").innerText = "Your GPA: " + gpa;
+        }
+
+        function addSemester() {
+            let table = document.getElementById("cgpaTable");
+            let row = table.insertRow(-1);
+            row.innerHTML = `<td>Semester ${table.rows.length -1}</td>
+                             <td><input type="number" step="0.01" min="0" max="10" placeholder="GPA"></td>`;
+        }
+
+        function calculateCGPA() {
+            let table = document.getElementById("cgpaTable");
+            let rows = table.rows;
+            let totalGPA = 0;
+            let count = 0;
+
+            for (let i = 1; i < rows.length; i++) {
+                let gpa = parseFloat(rows[i].cells[1].querySelector("input").value) || 0;
+                if (gpa > 0) {
+                    totalGPA += gpa;
+                    count++;
+                }
+            }
+            let cgpa = count > 0 ? (totalGPA / count).toFixed(2) : 0;
+            document.getElementById("cgpaResult").innerText = "Your CGPA: " + cgpa;
+        }
+
+        function goBack(){
+            window.history.back();
+        }
+    </script>
+</body>
+
+</html>

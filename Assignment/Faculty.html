@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty Page</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="navbar"><button class="back-button" onclick="goBack()">Back</button><h3>Faculty Portal - Assignments</h3></div>
+
+    <div class="container">
+        <h2>Assign an Assignment</h2>
+        
+        <input type="text" id="subjectTitle" placeholder="Subject Title" required>
+        <input type="text" id="subjectCode" placeholder="Subject Code" required>
+        
+        <input type="text" id="title" placeholder="Assignment Title" required>
+        <textarea id="description" placeholder="Assignment Description (Optional)"></textarea>
+        <input type="file" id="facultyFileInput" accept=".pdf">
+
+        <div style="margin-top: 20px;">
+            <h2 style="display: inline;">Schedule The Notification</h2> <small>(optional)</small>
+            <input type="time" placeholder="Notification Schedule Time : How many days" style="border: 2px solid red;"> 
+        </div>        
+        <button class="btn" onclick="uploadAssignment()">Upload Assignment</button>
+
+        <hr>
+
+        
+
+<h2>Existing Assignments</h2>
+<button class="viewbtn" onclick="fetchAssignments()">View Assignments</button>
+<table id="assignmentsTable">
+    <thead>
+        <tr>
+            <th>Subject</th>
+            <th>Code</th>
+            <th>Title</th>
+            <th>Description</th>
+            <th>File</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody id="assignmentsBody"></tbody>
+</table>
+
+    </div>
+
+    
+</body>
+</html>

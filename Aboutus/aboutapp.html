@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Smart Sphere Classroom</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f3f4f6;
+        }
+
+        .about-container {
+            background-color: #f9fafb;
+            padding: 4rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            gap: 3rem;
+        }
+
+        @media (min-width: 768px) {
+            .about-container {
+                flex-direction: row;
+                padding: 6rem 4rem;
+            }
+        }
+
+        .left-content {
+            flex: 1;
+            max-width: 36rem;
+        }
+
+        h2 {
+            font-size: 2.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #111827;
+        }
+
+        h3 {
+            font-size: 1.25rem;
+            color: #4b5563;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        p {
+            color: #374151;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        strong {
+            font-weight: 600;
+        }
+
+        .more-content {
+            display: none;
+            color: #374151;
+            margin-top: 1rem;
+        }
+
+        .more-content p {
+            margin-bottom: 1rem;
+        }
+
+        .more-content.show {
+            display: block;
+        }
+
+        .toggle-btn {
+            background-color: #111827;
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.375rem;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn:hover {
+            background-color: #1f2937;
+        }
+
+        .social-icons {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+            font-size: 1.25rem;
+            color: #374151;
+        }
+
+        .social-icons i {
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .social-icons .fa-facebook-f:hover {
+            color: #3b5998;
+        }
+
+        .social-icons .fa-twitter:hover {
+            color: #1da1f2;
+        }
+
+        .social-icons .fa-instagram:hover {
+            color: #e1306c;
+        }
+
+        .right-image {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .right-image img {
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            width: 100%;
+            max-width: 28rem;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="about-container">
+        <div class="left-content">
+            <h2>ABOUT US</h2>
+            <h3>Revolutionizing education with smart scheduling, real-time feedback, and AI-powered support.</h3>
+            <p>
+                <strong>Smart Sphere Classroom</strong> is an advanced online educational platform developed by a team of engineering students to overcome the limitations of traditional learning systems. It integrates features such as automatic test evaluation, intelligent assignment reminders, AI-powered chatbot for academic queries, and interactive learning modules. The system supports both students and educators through real-time notifications and seamless classroom management, improving productivity and engagement.
+            </p>
+            <div id="moreContent" class="more-content">
+                <p>
+                    Our platform addresses key challenges found in existing LMS systems like delayed feedback, lack of timely reminders, and poor student engagement. By combining the power of automation and artificial intelligence, we provide a structured learning environment that keeps both students and faculty connected.
+                </p>
+                <p>
+                    The AI-powered chatbot, built using Gen-Flash model, helps students get instant solutions to academic queries, reducing dependency on faculty and fostering self-learning. Faculty members can assign, evaluate, and monitor test results with minimal effort, thanks to our automated test management system.
+                </p>
+                <p>
+                    The integration with Firebase enables push/email notifications for test reminders and assignment deadlines, ensuring students never miss an important task. Our gamified modules like quiz games and coding puzzles make the learning experience more interactive and enjoyable.
+                </p>
+                <p>
+                    Smart Sphere Classroom is built using modern tools and frameworks including React.js, Node.js, MongoDB, and Firebase for scalability, speed, and flexibility. With our strong backend and structured frontend, we ensure a seamless user experience across devices.
+                </p>
+                <p>
+                    This project is guided by Mrs. Subhashini, Assistant Professor in the Department of Computer Science and Engineering, and is developed by Karunamoorthy S, Ashish Kumar Yadav, Ginni Sinha, and Kavya O as part of their major academic project.
+                </p>
+            </div>
+            <button id="toggleBtn" class="toggle-btn">Read More</button>
+            <div class="social-icons">
+                <i class="fab fa-facebook-f"></i>
+                <i class="fab fa-twitter"></i>
+                <i class="fab fa-instagram"></i>
+            </div>
+        </div>
+        <div class="right-image">
+            <img src="https://images.pexels.com/photos/4144224/pexels-photo-4144224.jpeg" alt="Students learning">
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleBtn = document.getElementById('toggleBtn');
+            const moreContent = document.getElementById('moreContent');
+            
+            toggleBtn.addEventListener('click', function() {
+                moreContent.classList.toggle('show');
+                toggleBtn.textContent = moreContent.classList.contains('show') ? 'Show Less' : 'Read More';
+            });
+        });
+    </script>
+</body>
+</html

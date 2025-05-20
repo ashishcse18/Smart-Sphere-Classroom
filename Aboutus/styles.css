@@ -1,0 +1,99 @@
+/* General Styling */
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+/* Main Container */
+.container {
+    max-width: 900px;
+    margin: 50px auto;
+    padding: 30px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    position: relative;
+}
+
+/* Back Button */
+.back-btn {
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: 0.3s;
+}
+
+.back-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Titles */
+h1, h2 {
+    color: #007bff;
+    opacity: 0;
+    transform: translateY(-20px);
+}
+
+/* Paragraphs */
+p {
+    font-size: 18px;
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+/* Feature List */
+.feature-list, .tech-list {
+    list-style: none;
+    padding: 0;
+    opacity: 0;
+}
+
+.feature-list li, .tech-list li {
+    padding: 10px;
+    font-size: 18px;
+    background: #f8f9fa;
+    margin: 5px 0;
+    border-radius: 5px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.feature-list li:hover, .tech-list li:hover {
+    transform: scale(1.05);
+    background: #dfe6f1;
+}
+
+/* Team Section */
+.team {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-top: 20px;
+    opacity: 0;
+}
+
+.member {
+    background: #007bff;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    width: 40%;
+    text-align: center;
+    font-size: 18px;
+    margin: 10px;
+    transition: transform 0.3s;
+}
+
+.member:hover {
+    transform: scale(1.1);
+}

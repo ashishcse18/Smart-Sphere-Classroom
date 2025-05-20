@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Courses & Notes</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f8f9fa;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+    h1, h2 {
+      margin-top: 0;
+      color: #333;
+    }
+    .course-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .sort-controls select {
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      background: #f1f1f1;
+    }
+    .back-btn {
+      display: inline-block;
+      margin: 10px 0 20px;
+      color: #007BFF;
+      cursor: pointer;
+    }
+    .upload-section {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0 auto 20px;
+      justify-content: center;
+    }
+    .upload-btn {
+      background-color: #007BFF;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .upload-btn:hover {
+      background-color: #0056b3;
+    }
+    #fileInput { display: none; }
+    .note-card {
+      background-color: #f0f4f8;
+      padding: 15px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+    .note-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .note-icon {
+      font-size: 22px;
+      color: #666;
+    }
+    .note-name {
+      font-size: 15px;
+    }
+    .note-actions button {
+      margin-left: 10px;
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+    .note-actions button:hover {
+      background-color: #c82333;
+    }
+    .fab {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      font-size: 24px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      cursor: pointer;
+    }
+    .fab:hover {
+      background-color: #0056b3;
+    }
+    .course-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .course-card {
+      background-color: #e9ecef;
+      padding: 16px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      cursor: pointer;
+    }
+    .course-title {
+      font-weight: bold;
+      font-size: 18px;
+      color: #333;
+    }
+    .course-desc {
+      font-size: 14px;
+      color: #666;
+      margin-top: 5px;
+    }
+    .course-actions {
+      text-align: right;
+      margin-top: 10px;
+    }
+    .delete-course-btn {
+      background: none;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      color: #dc3545;
+    }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="courseListView">
+      <div class="course-header">
+        <h1>Courses</h1>
+        <div class="sort-controls">
+          <select onchange="sortCourses(this.value)">
+            <option value="">Sort By</option>
+            <option value="az">A - Z</option>
+            <option value="za">Z - A</option>
+            <option value="date">Newest</option>
+          </select>
+        </div>
+      </div>
+      <div class="course-grid" id="courseGrid"></div>
+    </div>
+
+    <div id="courseNotesView" class="hidden">
+      <span class="back-btn" onclick="goBack()">← Back to Courses</span>
+      <div class="notes-header">
+        <h2 id="courseTitle">Course Notes</h2>
+        <div class="upload-section">
+          <label for="fileInput" class="upload-btn">📎 Upload Notes</label>
+          <input type="file" id="fileInput" multiple onchange="uploadNotes()" />
+        </div>
+      </div>
+      <div id="notesList"></div>
+    </div>
+  </div>
+
+  <button id="addCourseBtn" class="fab" onclick="addCourse()">+</button>
+
+  <script>
+    let courses = [];
+    let currentCourse = null;
+
+    async function loadCourses() {
+      const res = await fetch('http://localhost:5000/courses');
+      courses = await res.json();
+      renderCourses();
+    }
+
+    function renderCourses() {
+      const grid = document.getElementById('courseGrid');
+      grid.innerHTML = '';
+      courses.forEach(course => {
+        const card = document.createElement('div');
+        card.className = 'course-card';
+        card.innerHTML = `
+          <div onclick="openNotes('${course.title}')">
+            <div class="course-title">${course.title}</div>
+            <div class="course-desc">${course.desc || 'No description provided'}</div>
+          </div>
+          <div class="course-actions">
+            <button class="delete-course-btn" onclick="event.stopPropagation(); deleteCourse('${course.title}')">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    // async function addCourse() {
+    //   const title = prompt('Enter course title');
+    //   if (!title || title.trim() === '') return alert('Course title is required');
+    //   const desc = prompt('Enter course description') || '';
+
+    //   try {
+    //     const res = await fetch('http://localhost:5000/courses', {
+    //       method: 'POST',
+    //       headers: { 'Content-Type': 'application/json' },
+    //       body: JSON.stringify({ title: title.trim(), desc }),
+    //     });
+
+    //     if (res.status === 409) {
+    //       return alert('Course already exists.');
+    //     }
+
+    //     const course = await res.json();
+    //     courses.push(course);
+    //     renderCourses();
+    //   } catch (err) {
+    //     alert('Failed to add course.');
+    //   }
+    // }
+    async function addCourse() {
+  const { value: formValues } = await Swal.fire({
+    title: 'Add New Course',
+    html:
+      `<input id="swal-title" class="swal2-input" placeholder="Course Title" required>` +
+      `<input id="swal-desc" class="swal2-input" placeholder="Course Description (optional)">`,
+    focusConfirm: false,
+    showCancelButton: true,
+    confirmButtonText: 'Add Course',
+    preConfirm: () => {
+      const title = document.getElementById('swal-title').value.trim();
+      const desc = document.getElementById('swal-desc').value.trim();
+      if (!title) {
+        Swal.showValidationMessage('Course title is required');
+        return false;
+      }
+      return { title, desc };
+    }
+  });
+
+  if (!formValues) return;
+
+  try {
+    const res = await fetch('http://localhost:5000/courses', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formValues),
+    });
+
+    if (res.status === 409) {
+      Swal.fire('Error', 'Course already exists.', 'error');
+      return;
+    }
+
+    const course = await res.json();
+    courses.push(course);
+    renderCourses();
+    Swal.fire('Success', 'Course added successfully!', 'success');
+  } catch (err) {
+    Swal.fire('Error', 'Failed to add course.', 'error');
+  }
+}
+
+
+    async function openNotes(title) {
+      currentCourse = courses.find(c => c.title === title);
+      const res = await fetch(`http://localhost:5000/courses/${title}/notes`);
+      const notes = await res.json();
+      currentCourse.notes = notes;
+
+      document.getElementById('courseListView').classList.add('hidden');
+      document.getElementById('courseNotesView').classList.remove('hidden');
+      document.getElementById('courseTitle').innerText = currentCourse.title;
+      renderNotes();
+    }
+
+    function getFileIcon(ext) {
+      const map = {
+        pdf: 'fa-file-pdf', doc: 'fa-file-word', docx: 'fa-file-word',
+        ppt: 'fa-file-powerpoint', pptx: 'fa-file-powerpoint',
+        xls: 'fa-file-excel', xlsx: 'fa-file-excel',
+        jpg: 'fa-file-image', jpeg: 'fa-file-image', png: 'fa-file-image',
+        txt: 'fa-file-alt', zip: 'fa-file-archive'
+      };
+      return `fas ${map[ext.toLowerCase()] || 'fa-file'}`;
+    }
+
+    function renderNotes() {
+      const list = document.getElementById('notesList');
+      list.innerHTML = '';
+      currentCourse.notes.forEach(note => {
+        const ext = note.name.split('.').pop();
+        const card = document.createElement('div');
+        card.className = 'note-card';
+        card.innerHTML = `
+          <div class="note-info">
+            <i class="note-icon ${getFileIcon(ext)}"></i>
+            <span class="note-name">${note.name}</span>
+          </div>
+          <div class="note-actions">
+            <a href="http://localhost:5000/${note.path}" download>Download</a>
+            <button onclick="deleteNote('${note.name}')">Delete</button>
+          </div>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    async function deleteNote(name) {
+      if (!confirm('Delete this note?')) return;
+      await fetch(`http://localhost:5000/courses/${currentCourse.title}/notes/${name}`, { method: 'DELETE' });
+      currentCourse.notes = currentCourse.notes.filter(note => note.name !== name);
+      renderNotes();
+    }
+
+    async function deleteCourse(title) {
+      if (!confirm('Are you sure you want to delete this course?')) return;
+      await fetch(`http://localhost:5000/courses/${title}`, { method: 'DELETE' });
+      courses = courses.filter(c => c.title !== title);
+      renderCourses();
+    }
+
+    async function uploadNotes() {
+      const files = document.getElementById('fileInput').files;
+      const formData = new FormData();
+      for (const file of files) formData.append('files', file);
+
+      const res = await fetch(`http://localhost:5000/courses/${currentCourse.title}/notes`, {
+        method: 'POST',
+        body: formData,
+      });
+      const newNotes = await res.json();
+      currentCourse.notes.push(...newNotes);
+      renderNotes();
+    }
+
+    function goBack() {
+      document.getElementById('courseNotesView').classList.add('hidden');
+      document.getElementById('courseListView').classList.remove('hidden');
+    }
+
+    function sortCourses(mode) {
+      if (mode === 'az') courses.sort((a, b) => a.title.localeCompare(b.title));
+      else if (mode === 'za') courses.sort((a, b) => b.title.localeCompare(a.title));
+      else if (mode === 'date') courses.sort((a, b) => new Date(b.date) - new Date(a.date));
+      renderCourses();
+    }
+
+    loadCourses();
+  </script>
+</body>
+</html>

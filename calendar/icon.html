@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendar Popup</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .calendar-icon {
+            font-size: 50px;
+            color: #007bff;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .calendar-icon:hover {
+            transform: scale(1.2);
+        }
+
+        /* Popup Styling */
+        .popup {
+            position: absolute;
+            top: 50%; /* Start below */
+            left: calc(50% + 50px); /* Start beside the icon */
+            transform: translate(-50%, -50%) scale(0);
+            width: 350px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            display: none;
+            opacity: 0;
+            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+        }
+
+        .popup.show {
+            display: block;
+            transform: translate(-50%, -120%) scale(1); /* Move above the icon */
+            opacity: 1;
+        }
+
+        .popup h2 {
+            margin-top: 0;
+            color: #007bff;
+        }
+
+        .close-btn {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            float: right;
+        }
+
+        .schedule-list {
+            max-height: 200px;
+            overflow-y: auto;
+            text-align: left;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .schedule-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .schedule-list::-webkit-scrollbar-thumb {
+            background: #007bff;
+            border-radius: 10px;
+        }
+
+        .schedule-item {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            animation: slideIn 0.3s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Upcoming Task Schedules</h1>
+
+    <!-- Calendar Icon -->
+    <i class="fas fa-calendar-alt calendar-icon" id="calendarIcon" onclick="fetchSchedules()"></i>
+
+    <!-- Popup Box -->
+    <div class="popup" id="schedulePopup">
+        <button class="close-btn" onclick="closePopup()">X</button>
+        <h2>Scheduled Tasks</h2>
+        <div class="schedule-list" id="taskList">
+            <!-- Scheduled tasks will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        function fetchSchedules() {
+            fetch("http://localhost:2000/events")
+                .then(response => response.json())
+                .then(data => {
+                    let popup = document.getElementById("schedulePopup");
+                    let taskList = document.getElementById("taskList");
+
+                    taskList.innerHTML = ""; // Clear previous content
+
+                    if (data.length === 0) {
+                        taskList.innerHTML = "<p>No upcoming schedules.</p>";
+                    } else {
+                        data.forEach(event => {
+                            let formattedDate = event.date 
+                                ? new Date(event.date).toLocaleDateString('en-GB') 
+                                : "Invalid Date";
+
+                            let item = document.createElement("div");
+                            item.classList.add("schedule-item");
+                            item.innerHTML = `<strong>${formattedDate}:</strong> ${event.desc || "No description"}`;
+                            taskList.appendChild(item);
+                        });
+                    }
+
+                    // Get icon position and adjust popup
+                    let icon = document.getElementById("calendarIcon");
+                    let iconRect = icon.getBoundingClientRect();
+                    
+                    popup.style.top = `${iconRect.top - 20}px`; // Above icon
+                    popup.style.left = `${iconRect.right + 10}px`; // Beside icon
+
+                    popup.classList.add("show");
+                })
+                .catch(error => console.error("❌ Error fetching events:", error));
+        }
+
+        function closePopup() {
+            let popup = document.getElementById("schedulePopup");
+            popup.classList.remove("show");
+        }
+    </script>
+
+</body>
+</html>

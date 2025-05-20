@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Sphere Classroom</title>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="script.js"></script>
+
+    <style>
+        .calendar-icon {
+            position: absolute;
+            bottom: 20px;
+            right: 10px;
+            font-size: 50px;
+            color: #007bff;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .calendar-icon:hover {
+            transform: scale(1.2);
+        }
+
+        #chatbot-icon{
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            bottom: 100px;
+            right: 9px;
+            transition: transform 0.5s ease-in-out;
+        }
+        #chatbot-icon:hover{
+            transform: scale(1.2);
+        }
+        /* Popup Styling */
+        .popup {
+            position: absolute;
+            top: 50%;
+            /* Start below */
+            left: calc(50% + 50px);
+            /* Start beside the icon */
+            transform: translate(-50%, -50%) scale(0);
+            width: 350px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            display: none;
+            opacity: 0;
+            transition: transform 0.9s ease-in-out, opacity 0.9s ease-in-out;
+        }
+
+        .popup.show {
+            display: block;
+            transform: translate(-105%, -70%) scale(1);
+            /* Move above the icon */
+            opacity: 1;
+        }
+
+        .popup h2 {
+            margin-top: 0;
+            color: #007bff;
+        }
+
+        .close-btn {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            float: right;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .close-btn:hover {
+            transform: scale(1.10);
+        }
+
+        .schedule-list {
+            max-height: 200px;
+            overflow-y: auto;
+            text-align: left;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .schedule-list::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .schedule-list::-webkit-scrollbar-thumb {
+            background: #007bff;
+            border-radius: 10px;
+        }
+
+        .schedule-item {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            animation: slideIn 0.3s ease-in-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(-20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        #schedulefullviewbtn {
+            position: absolute;
+            top: 18px;
+            border-radius: 5px;
+            border: none;
+            right: 90px;
+            padding: px;
+            background-color: #007bff;
+            color: aliceblue;
+            width: 60px;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        #schedulefullviewbtn:hover {
+            transform: scale(1.10);
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="logo"><h1>Smart Sphere Classroom</h1></div>
+        <!-- <div class="user-icon">&#128100;</div> -->
+        <div class="Acc-circle"></div>
+        <div class="user-menu">
+            <div class="user-icon" onclick="toggleDropdown()">👤</div>
+            <div class="dropdown-menu" id="dropdown-menu">
+                <a href="#">Account Details</a>
+                <a href="#" onclick="logout()">Log Out</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="sidebar">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="Aboutus/aboutapp2.html">About Us</a></li>
+            <li><a href="calendar/calendar.html">Calendar</a></li>
+            <li><a href="Assignment/Faculty.html">Assignments</a></li>
+            <li><a href="Assignment/student.html">Notifications</a></li>
+            <!-- <li><a href="Classroom/clsroom.html">Classroom Folders</a></li> -->
+            <li><a href="backup/index1.html">Classroom Folders</a></li>
+            <li><a href="Courseplatform.html">Entrolled List</a></li>
+            <li><a href="QuizGames/quizpage.html">Quiz Games</a></li>
+            <li><a href="Chatbot/chatbot.html">Chatbot</a></li>
+            <li><a href="TestDashboard.html">Test Portal</a></li>
+            <li><a href="Calculator/resultcalci.html">GPA and CGPA calculator</a></li>
+            <li><a href="#">Settings</a></li>
+        </ul>
+    </div>
+
+    <div class="content">
+        <h1>Welcome to Smart Sphere Classroom</h1>
+        <p>Empowering Education with Innovation!
+            We're delighted to have you here. Whether you're a student striving for academic excellence or a faculty member driving knowledge forward, Smart Sphere Classroom is your all-in-one hub for managing courses, assignments, tests, schedules, and more—seamlessly and intelligently. Explore the tools, interact with the AI chatbot, track your performance, and stay connected with real-time alerts—all within a single platform designed to enhance your digital learning experience.</p>
+    </div>
+
+    <!-- Calendar icon -->
+    <div class="popup" id="schedulePopup">
+        <button class="close-btn" onclick="closePopup()">X</button>
+        <h2>Scheduled Tasks</h2> <button id="schedulefullviewbtn" onclick="movetoscheduler()">Full View</button>
+        <div class="schedule-list" id="taskList">
+            <!-- Scheduled tasks will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        function fetchSchedules() {
+            fetch("http://localhost:2000/events")
+                .then(response => response.json())
+                .then(data => {
+                    let popup = document.getElementById("schedulePopup");
+                    let taskList = document.getElementById("taskList");
+
+                    taskList.innerHTML = ""; // Clear previous content
+
+                    if (data.length === 0) {
+                        taskList.innerHTML = "<p>No upcoming schedules.</p>";
+                    } else {
+                        data.forEach(event => {
+                            let eventDate = new Date(event.date);
+            let formattedDate = eventDate.getUTCDate().toString().padStart(2, '0') + '/' +
+                                (eventDate.getUTCMonth() + 1).toString().padStart(2, '0') + '/' +
+                                eventDate.getUTCFullYear();
+
+                            let item = document.createElement("div");
+                            item.classList.add("schedule-item");
+                            item.innerHTML = `<strong>${formattedDate}:</strong> ${event.desc || "No description"}`;
+                            taskList.appendChild(item);
+                        });
+                    }
+
+                    // Get icon position and adjust popup
+                    let icon = document.getElementById("calendarIcon");
+                    let iconRect = icon.getBoundingClientRect();
+
+                    popup.style.top = `${iconRect.top - 20}px`; // Above icon
+                    popup.style.left = `${iconRect.right + 10}px`; // Beside icon
+
+                    popup.classList.add("show");
+                })
+                .catch(error => console.error("❌ Error fetching events:", error));
+        }
+
+        function closePopup() {
+            let popup = document.getElementById("schedulePopup");
+            popup.classList.remove("show");
+        }
+
+        function movetoscheduler() {
+            window.location.href = "calendar/calendar.html";
+        }
+        function movetochatbot() {
+            window.location.href = "Chatbot/chatbot.html";
+        }
+    </script>
+    <img src="img/robot-assistant.png" alt="Chatbot" id="chatbot-icon" onclick="movetochatbot()">
+    <img src="img/icons8-calendar-50.png" alt="Calendar" class="fas fa-calendar-alt calendar-icon" id="calendarIcon"
+        onclick="fetchSchedules()">
+</body>
+
+</html>

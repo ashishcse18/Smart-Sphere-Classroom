@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Start Exam</title>
+  <link rel="stylesheet" href="start_exam.css" />
+</head>
+<body>
+  <div class="exam-header">
+    <h2 id="examTitle">Loading Exam...</h2>
+    <div class="exam-meta">
+      <span id="duration"></span>
+      <span id="timer">Time Left: 00:00</span>
+    </div>
+  </div>
+
+  <div id="examContainer" class="exam-container"></div>
+  <button id="submitBtn" onclick="submitExam()">Submit</button>
+
+  <script>
+    let questions = [];
+    let examName = "";
+    let examId = "";
+    let durationMinutes = 0;
+    let timerInterval;
+
+    async function loadExam() {
+      const urlParams = new URLSearchParams(window.location.search);
+      examId = urlParams.get('id');
+
+      try {
+        const response = await fetch(`http://localhost:3000/api/getExamById/${examId}`);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+
+        const exam = await response.json();
+        questions = exam.questions;
+        examName = exam.subjectTitle;
+        durationMinutes = parseInt(exam.duration, 10);
+
+        document.getElementById('examTitle').textContent = exam.subjectTitle;
+        document.getElementById('duration').textContent = `Duration: ${exam.duration} minutes`;
+
+        const container = document.getElementById('examContainer');
+        container.innerHTML = questions.map((q, idx) => `
+          <div class="question-block">
+            <h3>${idx + 1}. ${q.question}</h3>
+            ${q.options.map((opt, i) => `
+              <label><input type="radio" name="q${idx}" value="${opt}" /> ${opt}</label><br/>
+            `).join('')}
+          </div>
+        `).join('');
+
+        startTimer(durationMinutes);
+      } catch (err) {
+        console.error("Error fetching exam data:", err);
+        alert("Failed to load exam data. Please try again later.");
+      }
+    }
+
+    function startTimer(minutes) {
+      let timeLeft = minutes * 60;
+      const timerDisplay = document.getElementById('timer');
+
+      timerInterval = setInterval(() => {
+        const mins = Math.floor(timeLeft / 60);
+        const secs = timeLeft % 60;
+        timerDisplay.textContent = `Time Left: ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          alert("Time is up! Submitting your exam.");
+          submitExam();
+        }
+
+        timeLeft--;
+      }, 1000);
+    }
+
+    async function submitExam() {
+      clearInterval(timerInterval);
+
+      let score = 0;
+      questions.forEach((q, idx) => {
+        const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+        if (selected && selected.value === q.options[parseInt(q.correctOption) - 1]) {
+          score++;
+        }
+      });
+
+      const studentName = prompt("Enter your Name:");
+      if (!studentName) {
+        alert("Name is required to submit the exam.");
+        return;
+      }
+
+      try {
+        await fetch('http://localhost:3000/api/submitMarks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            studentName,
+            examName,
+            marks: score,
+            examId
+          })
+        });
+
+        alert(`Test submitted successfully! You scored ${score}/${questions.length}`);
+        window.location.href = "http://127.0.0.1:5500/TestDashboard.html";
+      } catch (error) {
+        console.error("Error submitting exam:", error);
+        alert("There was an error submitting your exam. Please try again.");
+      }
+    }
+
+    function showModal(score, total) {
+  const modal = document.getElementById("scoreModal");
+  const message = document.getElementById("scoreMessage");
+  message.textContent = `You scored ${score} out of ${total}.`;
+  modal.style.display = "block";
+}
+
+function closeModal() {
+  const modal = document.getElementById("scoreModal");
+  modal.style.display = "none";
+}
+
+function goToDashboard() {
+  window.location.href = "http://127.0.0.1:5500/TestDashboard.html";
+}
+
+async function submitExam() {
+  clearInterval(timerInterval);
+
+  let score = 0;
+  questions.forEach((q, idx) => {
+    const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+    if (selected && selected.value === q.options[parseInt(q.correctOption) - 1]) {
+      score++;
+    }
+  });
+
+  const studentName = prompt("Enter your Name:");
+  if (!studentName) {
+    alert("Name is required to submit the exam.");
+    return;
+  }
+
+  try {
+    await fetch('http://localhost:3000/api/submitMarks', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        studentName,
+        examName,
+        marks: score,
+        examId
+      })
+    });
+
+    showModal(score, questions.length);
+  } catch (error) {
+    console.error("Error submitting exam:", error);
+    alert("There was an error submitting your exam. Please try again.");
+  }
+}
+
+    window.onload = loadExam;
+  </script>
+
+  <!-- Score Modal -->
+<div id="scoreModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h2>Exam Completed</h2>
+    <p id="scoreMessage"></p>
+    <button onclick="goToDashboard()">Go to Dashboard</button>
+  </div>
+</div>
+
+</body>
+</html>

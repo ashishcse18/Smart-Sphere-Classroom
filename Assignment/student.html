@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Page</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js" defer></script>
+</head>
+<body>
+    <div class="navbar"><button class="back-button" onclick="goBack()">Back</button><h3>Notifications</h3></div>
+
+    <div class="container">
+        <h2>Available Assignments</h2>
+
+        <div id="subjectInfo"></div>
+        <div id="assignmentsList"></div>
+
+        <h3>Upload Your Submission</h3>
+        <input type="file" id="studentFileInput" accept=".pdf">
+        <button class="btn" onclick="uploadStudentAssignment()">Submit Assignment</button>
+        <div id="studentUploads"></div>
+    </div>
+
+    
+</body>
+</html>
