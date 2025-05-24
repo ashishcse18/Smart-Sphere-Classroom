@@ -1,4 +1,4 @@
-**Smart Sphere Classroom**
+**SMART SPHERE CLASSROOM**
 
 **Smart Sphere Classroom** is an intelligent, AI-integrated Learning Management System (LMS) developed to transform the traditional online education experience. Built with modern web technologies and AI, it offers an all-in-one platform for students and faculty to communicate, collaborate, and achieve academic success efficiently.
 
