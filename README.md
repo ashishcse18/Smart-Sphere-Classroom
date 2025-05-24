@@ -109,11 +109,8 @@ Multilingual chatbot interface
 
 👨‍💻 Developed By
 Ashish Kumar Yadav
-
 Ginni Sinha
-
 Karunamoorthy S
-
 Kavya O
 
 In partial fulfillment of the degree B.E. Computer Science and Engineering
