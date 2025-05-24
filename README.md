@@ -1,45 +1,45 @@
-Smart Sphere Classroom
+**Smart Sphere Classroom**
 
 **Smart Sphere Classroom** is an intelligent, AI-integrated Learning Management System (LMS) developed to transform the traditional online education experience. Built with modern web technologies and AI, it offers an all-in-one platform for students and faculty to communicate, collaborate, and achieve academic success efficiently.
 
 ---
 
-Features
+**Features**
 
-- ✅ **User Authentication & Role-Based Access** (Student / Faculty)
-- 🤖 **Gen Flash AI 2.0 Chatbot** – Real-time academic support using NLP
-- 📝 **Assignment Management** – Upload, submit, and track assignments
-- 📊 **Auto Test Evaluation** – Instant grading and analytics for quizzes/tests
-- 🗂 **Classroom Folders** – Organized course material repository
-- 📅 **Event Calendar & Notifications** – Scheduled task reminders via Email.js
-- 🧮 **GPA/CGPA Calculator** – Helps students track academic progress
-- 🎮 **Gamified Quiz Engine** – Fun, interactive quiz games
-- 📚 **Course Enrollment & Certification** – Structured course learning
+-  **User Authentication & Role-Based Access** (Student / Faculty)
+-  **Gen Flash AI 2.0 Chatbot** – Real-time academic support using NLP
+-  **Assignment Management** – Upload, submit, and track assignments
+-  **Auto Test Evaluation** – Instant grading and analytics for quizzes/tests
+-  **Classroom Folders** – Organized course material repository
+-  **Event Calendar & Notifications** – Scheduled task reminders via Email.js
+-  **GPA/CGPA Calculator** – Helps students track academic progress
+-  **Gamified Quiz Engine** – Fun, interactive quiz games
+-  **Course Enrollment & Certification** – Structured course learning
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
-### 🌐 Frontend
+###  Frontend
 - HTML5, CSS3, JavaScript (Vanilla)
 - Responsive UI for smooth user experience
 
-### 🧠 Backend
+###  Backend
 - Node.js
 - Express.js
 
-### 🗄️ Database
+###  Database
 - MongoDB (with GridFS for file storage)
 
-### ✉️ Notifications
+###  Notifications
 - Email.js for task reminders and alerts
 
-### 🤖 AI Integration
+###  AI Integration
 - Gen Flash AI 2.0 for chatbot functionality
 
 ---
 
-## 📂 Project Structure
+##  Project Structure
 
 ```bash
 SmartSphereClassroom/
